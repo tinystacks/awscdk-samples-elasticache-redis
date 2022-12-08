@@ -1,0 +1,369 @@
+{
+    "Parameters": {
+      "TinyStacksToken": {
+        "Description": "DO NOT CHANGE OR SHARE THIS. This is a temporary TinyStacks token unique to your user",
+        "Type": "String",
+        "Default": "stub"
+      },
+      "TinyStacksUserId": {
+        "Description": "DO NOT CHANGE OR SHARE THIS. This is your unique group id, it's necessary for deleting this role",
+        "Type": "String",
+        "Default": "stub"
+      },
+      "DeployRoleArn": {
+        "Description": "DO NOT CHANGE OR SHARE THIS. This is the identifier of the unique deploy role that will deploy the awstf-ecs-hello-world stack into your account.",
+        "Type": "String"
+      },
+      "RoleName": {
+        "Description": "DO NOT CHANGE OR SHARE THIS. This is the unique identifier for the execution role that will live in your account.",
+        "Type": "String"
+      },
+      "StackName": {
+        "Description": "DO NOT CHANGE THIS.",
+        "Type": "String"
+      },
+      "SourceName": {
+        "Description": "DO NOT CHANGE THIS.",
+        "Type": "String",
+        "Default": "stub"
+      },
+      "SourceOwner": {
+        "Description": "DO NOT CHANGE THIS.",
+        "Type": "String",
+        "Default": "stub"
+      },
+      "IsGroup": {
+        "Description": "DO NOT CHANGE THIS.",
+        "Type": "String",
+        "AllowedValues": [
+          "TRUE",
+          "FALSE"
+        ],
+        "Default": "FALSE"
+      }
+    },
+    "Resources": {
+      "Role": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+          "RoleName": {
+            "Ref": "RoleName"
+          },
+          "AssumeRolePolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": "arn:aws:iam::849087520365:role/tinystacks-service-role"
+                },
+                "Action": [
+                  "sts:AssumeRole"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "AWS": {
+                    "Ref": "DeployRoleArn"
+                  }
+                },
+                "Action": [
+                  "sts:AssumeRole"
+                ]
+              }
+            ]
+          },
+          "Policies": [
+            {
+              "PolicyName": "MiscPolicy",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "servicequotas:Get*",
+                      "pricing:GetProducts"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              }
+            }
+          ],
+          "Tags": [
+            {
+              "Key": "ts_created_by",
+              "Value": "TinyStacks"
+            }
+          ]
+        }
+      },
+      "IdentityAndSecretManagementPolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "ManagedPolicyName": {
+            "Fn::Sub": "${AWS::StackName}-secret-and-identity-management-policy"
+          },
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "iam:List*",
+                  "iam:Get*",
+                  "iam:*Tag*",
+                  "iam:Untag*",
+                  "iam:Describe*",
+                  "iam:CreatePolicy*",
+                  "iam:DeletePolicy*",
+                  "iam:CreateRole",
+                  "iam:UpdateRole",
+                  "iam:PassRole",
+                  "iam:DeleteRole",
+                  "iam:PutRolePolicy",
+                  "iam:DeleteRolePolicy",
+                  "iam:AttachRolePolicy",
+                  "iam:UpdateAssumeRolePolicy",
+                  "iam:DetachRolePolicy",
+                  "ssm:PutParameter",
+                  "ssm:GetParameters",
+                  "ssm:GetParameter",
+                  "ssm:DeleteParameter",
+                  "ssm:DeleteParameters",
+                  "ssm:*Tag*"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "Roles": [
+            {
+              "Ref": "Role"
+            }
+          ]
+        }
+      },
+      "ScalingPolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "ManagedPolicyName": {
+            "Fn::Sub": "${AWS::StackName}-scaling-policy"
+          },
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "*",
+                  "application-autoscaling:*",
+                  "ecs:DescribeServices",
+                  "ecs:UpdateService",
+                  "cloudwatch:DescribeAlarms",
+                  "cloudwatch:PutMetricAlarm",
+                  "cloudwatch:DeleteAlarms",
+                  "cloudwatch:DescribeAlarmHistory",
+                  "cloudwatch:DescribeAlarmsForMetric",
+                  "cloudwatch:GetMetricStatistics",
+                  "cloudwatch:ListMetrics",
+                  "cloudwatch:DisableAlarmActions",
+                  "cloudwatch:EnableAlarmActions",
+                  "iam:CreateServiceLinkedRole",
+                  "sns:CreateTopic",
+                  "sns:Subscribe",
+                  "sns:Get*",
+                  "sns:List*"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "Roles": [
+            {
+              "Ref": "Role"
+            }
+          ]
+        }
+      },
+      "NetworkingPolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "ManagedPolicyName": {
+            "Fn::Sub": "${AWS::StackName}-networking-policy"
+          },
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ec2:Describe*",
+                  "ec2:*Tag*",
+                  "ec2:CreateInternetGateway",
+                  "ec2:AttachInternetGateway",
+                  "ec2:DetachInternetGateway",
+                  "ec2:DeleteInternetGateway",
+                  "ec2:CreateNatGateway",
+                  "ec2:DeleteNatGateway",
+                  "ec2:CreateRoute",
+                  "ec2:RepalceRoute",
+                  "ec2:DeleteRoute",
+                  "ec2:CreateRouteTable",
+                  "ec2:AssociateRouteTable",
+                  "ec2:ReplaceRoute*",
+                  "ec2:DisassociateRouteTable",
+                  "ec2:DeleteRouteTable",
+                  "ec2:CreateSecurityGroup",
+                  "ec2:DeleteSecurityGroup",
+                  "ec2:AuthorizeSecurityGroupIngress",
+                  "ec2:RevokeSecurityGroupIngress",
+                  "ec2:AuthorizeSecurityGroupEgress",
+                  "ec2:RevokeSecurityGroupEgress",
+                  "ec2:AssociateSubnetCidrBlock",
+                  "ec2:CreateDefaultSubnet",
+                  "ec2:CreateSubnet",
+                  "ec2:CreateSubnetCidrReservation",
+                  "ec2:DeleteSubnet",
+                  "ec2:DeleteSubnetCidrReservation",
+                  "ec2:DisassociateSubnetCidrBlock",
+                  "ec2:GetSubnetCidrReservations",
+                  "ec2:ModifySubnetAttribute",
+                  "ec2:CreateVpc",
+                  "ec2:DeleteVpc",
+                  "ec2:ModifyVpcAttribute",
+                  "ec2:AcceptTransitGatewayVpcAttachment",
+                  "ec2:CreateTransitGatewayVpcAttachment",
+                  "ec2:DeleteTransitGatewayVpcAttachment",
+                  "ec2:ModifyTransitGatewayVpcAttachment",
+                  "ec2:RejectTransitGatewayVpcAttachment",
+                  "ec2:AcceptVpcPeeringConnection",
+                  "ec2:CreateVpcPeeringConnection",
+                  "ec2:DeleteVpcPeeringConnection",
+                  "ec2:ModifyVpcPeeringConnectionOptions",
+                  "ec2:RejectVpcPeeringConnection",
+                  "ec2:AllocateAddress",
+                  "ec2:ReleaseAddress",
+                  "ec2:AssociateAddress",
+                  "ec2:DisassociateAddress",
+                  "ec2:ModifyAddressAttribute",
+                  "ec2:ResetAddressAttribute",
+                  "ec2:AllocateHosts",
+                  "elasticloadbalancing:Describe*",
+                  "elasticloadbalancing:*Tag*",
+                  "elasticloadbalancing:CreateListener",
+                  "elasticloadbalancing:ModifyListener",
+                  "elasticloadbalancing:DeleteListener",
+                  "elasticloadbalancing:CreateLoadBalancer",
+                  "elasticloadbalancing:DeleteLoadBalancer",
+                  "elasticloadbalancing:CreateTargetGroup",
+                  "elasticloadbalancing:ModifyTargetGroup",
+                  "elasticloadbalancing:DeleteTargetGroup",
+                  "elasticloadbalancing:ModifyTargetGroupAttributes",
+                  "elasticloadbalancing:ModifyLoadBalancerAttributes",
+                  "elasticloadbalancing:RegisterTargets",
+                  "elasticloadbalancing:SetSecurityGroups"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "Roles": [
+            {
+              "Ref": "Role"
+            }
+          ]
+        }
+      },
+      "ComputePolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "ManagedPolicyName": {
+            "Fn::Sub": "${AWS::StackName}-compute-policy"
+          },
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ecs:List*",
+                  "ecs:Describe*",
+                  "ecs:*Tag*",
+                  "ecs:CreateCluster",
+                  "ecs:UpdateCluster",
+                  "ecs:DeleteCluster",
+                  "ecs:CreateService",
+                  "ecs:UpdateService",
+                  "ecs:DeleteService",
+                  "ecs:CreateTaskDefinition",
+                  "ecs:UpdateTaskDefinition",
+                  "ecs:DeleteTaskDefinition",
+                  "ecs:DeregisterTaskDefinition",
+                  "ecs:RegisterTaskDefinition"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "Roles": [
+            {
+              "Ref": "Role"
+            }
+          ]
+        }
+      },
+      "MonitoringPolicy": {
+        "Type": "AWS::IAM::ManagedPolicy",
+        "Properties": {
+          "ManagedPolicyName": {
+            "Fn::Sub": "${AWS::StackName}-monitoring-policy"
+          },
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "cloudwatch:*Tag*",
+                  "cloudwatch:DeleteDashboards",
+                  "cloudwatch:Get*",
+                  "cloudwatch:ListDashboards",
+                  "cloudwatch:PutDashboard",
+                  "logs:Get*",
+                  "logs:Describe*",
+                  "logs:*Tag*",
+                  "logs:CreateLog*",
+                  "logs:DeleteLog*",
+                  "logs:ListLogDeliveries",
+                  "logs:UpdateLogDelivery",
+                  "logs:PutResourcePolicy",
+                  "logs:PutRetentionPolicy",
+                  "logs:*LogEvents"
+                ],
+                "Resource": "*"
+              }
+            ]
+          },
+          "Roles": [
+            {
+              "Ref": "Role"
+            }
+          ]
+        }
+      }
+    },
+    "Outputs": {
+      "RoleArn" : {
+        "Description" : "Arn for the execution role",
+        "Value" : {
+          "Fn::GetAtt" : [
+            "Role",
+            "Arn"
+          ]
+        }
+      }
+    }
+  }

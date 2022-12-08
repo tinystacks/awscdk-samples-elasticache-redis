@@ -1,0 +1,67 @@
+{
+    "name": "@tinystacks/awscdk-samples-elasticache-redis",
+    "version": "0.1.0",
+    "description": ".",
+    "main": "dist/index.js",
+    "scope": "@tinystacks",
+    "files": [
+      "dist"
+    ],
+    "scripts": {
+      "build": "tsc",
+      "cleanup": "rm -rf dist || true && rm *.tgz || true",
+      "clean-build": "npm ci && npm run cleanup && npm run build",
+      "dependency-check": "./node_modules/.bin/depcheck",
+      "install-local-utils": "npm i @tinystacks/iac-utils@local --@tinystacks:registry=http://local-npm-registry:4873",
+      "install-local-packages": "npm run install-local-utils",
+      "install-remote-utils": "npm i @tinystacks/iac-utils@latest --@tinystacks:registry=https://registry.npmjs.org",
+      "install-remote-constructs": "npm i @tinystacks/aws-cdk-constructs@latest --@tinystacks:registry=https://registry.npmjs.org",
+      "install-remote-packages": "npm uninstall @tinystacks/iac-utils; npm run install-remote-utils; npm run install-remote-constructs",
+      "lint": "./node_modules/.bin/eslint --ext .ts,.js ./",
+      "lint-fix": "./node_modules/.bin/eslint --ext .ts,.js --fix ./",
+      "lint-no-warn": "./node_modules/.bin/eslint --ext .ts,.js --quiet ./",
+      "qa": "npm run lint",
+      "test": "echo \"No tests to run yet...\""
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/tinystacks/meltano.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/tinystacks/meltano/issues"
+    },
+    "homepage": "https://github.com/tinystacks/meltano#readme",
+    "devDependencies": {
+      "@types/jest": "^28.1.6",
+      "@types/lodash.kebabcase": "^4.1.7",
+      "@types/node": "^18.11.9",
+      "@typescript-eslint/eslint-plugin": "^5.33.0",
+      "@typescript-eslint/parser": "^5.33.0",
+      "aws-cdk": "^1.180.0",
+      "aws-sdk": "^2.1222.0",
+      "cfn-response": "^1.0.1",
+      "depcheck": "^1.4.3",
+      "eslint": "^8.21.0",
+      "eslint-import-resolver-typescript": "^3.4.0",
+      "eslint-plugin-import": "^2.26.0",
+      "eslint-plugin-unused-imports": "^2.0.0",
+      "jest": "^28.1.3",
+      "lodash.isempty": "^4.4.0",
+      "ts-jest": "^28.0.7",
+      "ts-node": "^10.9.1",
+      "typescript": "^4.9.3"
+    },
+    "dependencies": {
+      "@aws-cdk/aws-ec2": "^1.180.0",
+      "@aws-cdk/aws-secretsmanager": "^1.180.0",
+      "@tinystacks/aws-cdk-constructs": "^0.13.7",
+      "@tinystacks/iac-utils": "0.0.10",
+      "aws-cdk-lib": "^2.37.0",
+      "constructs": "^10.1.73",
+      "lodash.kebabcase": "^4.1.1",
+      "prando": "^6.0.1",
+      "source-map-support": "^0.5.21"
+    }
+  }
