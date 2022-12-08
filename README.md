@@ -1,0 +1,1 @@
+awscdk-samples-elasticache-redis
