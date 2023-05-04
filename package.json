@@ -56,7 +56,7 @@
     "dependencies": {
       "@aws-cdk/aws-ec2": "^1.180.0",
       "@aws-cdk/aws-secretsmanager": "^1.180.0",
-      "@tinystacks/aws-cdk-constructs": "^0.13.7",
+      "@tinystacks/aws-cdk-constructs": "^0.13.15",
       "@tinystacks/iac-utils": "0.0.10",
       "aws-cdk-lib": "^2.37.0",
       "constructs": "^10.1.73",
