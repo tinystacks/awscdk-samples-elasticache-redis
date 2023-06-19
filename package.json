@@ -40,7 +40,7 @@
       "@typescript-eslint/eslint-plugin": "^5.33.0",
       "@typescript-eslint/parser": "^5.33.0",
       "aws-cdk": "^1.180.0",
-      "aws-sdk": "^2.1222.0",
+      "aws-sdk": "^2.1400.0",
       "cfn-response": "^1.0.1",
       "depcheck": "^1.4.3",
       "eslint": "^8.21.0",
