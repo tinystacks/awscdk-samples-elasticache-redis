@@ -58,7 +58,7 @@
       "@aws-cdk/aws-secretsmanager": "^1.180.0",
       "@tinystacks/aws-cdk-constructs": "^0.13.7",
       "@tinystacks/iac-utils": "0.0.10",
-      "aws-cdk-lib": "^2.37.0",
+      "aws-cdk-lib": "^2.80.0",
       "constructs": "^10.1.73",
       "lodash.kebabcase": "^4.1.1",
       "prando": "^6.0.1",
